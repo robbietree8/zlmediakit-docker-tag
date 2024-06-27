@@ -1,0 +1,24 @@
+name: docker
+
+on:
+  push:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull image
+        shell: bash
+        run: |
+          docker pull zlmediakit/zlmediakit:master
+      - name: login to aliyun acr
+        uses: aliyun/acr-login@v1
+        with:
+          region-id: cn-hangzhou
+          access-key-id: ${{ secrets.ALIYUN_ACR_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACR_KEY_SECRET }}
+      - name: Tag and push
+        id: tag_and_push
+        run: |
+          docker tag zlmediakit/zlmediakit:master registry.cn-hangzhou.aliyuncs.com/github-dockerhub/zlmediakit:master
+          docker push registry.cn-hangzhou.aliyuncs.com/github-dockerhub/zlmediakit:master
